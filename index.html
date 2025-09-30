@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的作品集</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>我的作品集</h1>
+    <p>使用 Google Sheet + GitHub Pages 自動更新 ✨</p>
+    <nav>
+      <button onclick="filterGallery('全部')">全部</button>
+      <button onclick="filterGallery('設計')">設計</button>
+      <button onclick="filterGallery('插畫')">插畫</button>
+      <button onclick="filterGallery('攝影')">攝影</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="gallery" id="gallery"></section>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <footer>
+    <p>© 2025 by Jyun Ying. All Rights Reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
