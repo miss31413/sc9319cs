@@ -1,19 +1,29 @@
 let allData = [];
 
-// 你的 Google Sheet JSON API 連結
+// ✅ 改成你的 Google Sheet JSON API
 const SHEET_URL = "https://opensheet.elk.sh/1EZweNHWV3pBZ9po1CWiVKALbhFRHVCrA779PMOH_8bQ/作品";
 
 fetch(SHEET_URL)
   .then(res => res.json())
   .then(data => {
+    console.log("✅ 抓到的資料:", data); // Debug
     allData = data;
     renderGallery(allData);
-  });
+  })
+  .catch(err => console.error("❌ 讀取資料失敗:", err));
 
 function renderGallery(items) {
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
+
+  if (!items || items.length === 0) {
+    gallery.innerHTML = "<p>⚠ 沒有資料可以顯示</p>";
+    return;
+  }
+
   items.forEach(item => {
+    console.log("📷 圖片網址:", item['圖片網址']); // Debug
+
     const card = document.createElement("div");
     card.className = `card ${item["分類"]}`;
     card.innerHTML = `
