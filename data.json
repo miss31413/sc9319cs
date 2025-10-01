@@ -1,14 +1,7 @@
 [
-  {
-    "name": "project1",
-    "desc": "圖片作品",
-    "link": "assets/img/project1.png",
-    "category": "插畫"
-  },
-  {
-    "name": "demo1",
-    "desc": "影片作品",
-    "link": "assets/video/demo1.mp4",
-    "category": "影片"
-  }
+  {"name": "", "desc": "圖片作品", "link": "assets/img/.gitkeep", "category": "圖片"}
+,
+  {"name": "jimeng-2025-09-23-2841-纯黑色背景，字体设计，上下左右留白，主体字在画面中间，主体为白色，主体为手写毛笔...", "desc": "圖片作品", "link": "assets/img/jimeng-2025-09-23-2841-纯黑色背景，字体设计，上下左右留白，主体字在画面中间，主体为白色，主体为手写毛笔....png", "category": "圖片"}
+,
+  {"name": "", "desc": "影片作品", "link": "assets/video/.gitkeep", "category": "影片"}
 ]
