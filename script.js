@@ -1,37 +1,49 @@
-const SHEET_URL = "https://opensheet.elk.sh/1EZweNHWV3pBZ9po1CWiVKALbhFRHVCrA779PMOH_8bQ/工作表1";
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzo3Waa4Xd39BNO2zIFIq5INi1Z_f9nsgbobJLJwb6HTEO5Xaiu7HLyEmHqHiAUGimbbg/exec";
-
-// 從分享連結抽 File ID
-function extractFileId(url) {
-  const match = url.match(/[-\w]{25,}/);
-  return match ? match[0] : null;
+async function fetchData() {
+  try {
+    const res = await fetch("data.json"); // 直接抓 Repo 裡的 data.json
+    if (!res.ok) throw new Error("無法載入 data.json");
+    const items = await res.json();
+    return items;
+  } catch (error) {
+    console.error("載入 data.json 出錯:", error);
+    return [];
+  }
 }
 
-fetch(SHEET_URL)
-  .then(res => res.json())
-  .then(data => {
-    renderGallery(data);
-  })
-  .catch(err => {
-    console.error("讀取 Google Sheet JSON 失敗：", err);
-  });
-
-function renderGallery(items) {
+async function renderGallery(category = "全部") {
+  const items = await fetchData();
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
+
   items.forEach(item => {
-    const fileId = extractFileId(item["圖片網址"]);
-    let imgUrl = "";
-    if (fileId) {
-      imgUrl = `${GAS_URL}?id=${fileId}`;
+    if (category === "全部" || item.category === category) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      let mediaElement;
+      if (item.link.endsWith(".mp4")) {
+        mediaElement = `
+          <video controls width="320">
+            <source src="${item.link}" type="video/mp4">
+            你的瀏覽器不支援影片播放
+          </video>`;
+      } else {
+        mediaElement = `<img src="${item.link}" alt="${item.name}" width="320">`;
+      }
+
+      card.innerHTML = `
+        <h2>${item.name}</h2>
+        <p>${item.desc}</p>
+        ${mediaElement}
+      `;
+      gallery.appendChild(card);
     }
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="${imgUrl}" alt="${item["作品名稱"]}">
-      <h2>${item["作品名稱"]}</h2>
-      <p>${item["作品描述"]}</p>
-    `;
-    gallery.appendChild(card);
   });
 }
+
+function filterGallery(category) {
+  renderGallery(category);
+}
+
+// 預設載入
+renderGallery();
