@@ -1,28 +1,68 @@
--<!DOCTYPE html>
--<html lang="zh-Hant">
--<head>
--  <meta charset="UTF-8">
--  <meta name="viewport" content="width=device-width, initial-scale=1.0">
--  <title>我的作品集</title>
--  <link rel="stylesheet" href="style.css">
--</head>
--<body>
--  <header>
--    <h1>我的作品集</h1>
--    <p>Google Sheet + GAS 代理圖片</p>
--  </header>
--
--  <main>
--    <section id="gallery" class="gallery"></section>
--  </main>
--
--  <footer>
--    <p>© 2025 by Jyun Ying. All Rights Reserved.</p>
--  </footer>
--
--  <script src="script.js"></script>
--</body>
--</html>
+--<!DOCTYPE html>
+--<html lang="zh-Hant">
+--<head>
+--  <meta charset="UTF-8">
+--  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+--  <title>我的作品集</title>
+--  <link rel="stylesheet" href="style.css">
+--</head>
+--<body>
+--  <header>
+--    <h1>我的作品集</h1>
+--    <p>Google Sheet + GAS 代理圖片</p>
+--  </header>
+--
+--  <main>
+--    <section id="gallery" class="gallery"></section>
+--  </main>
+--
+--  <footer>
+--    <p>© 2025 by Jyun Ying. All Rights Reserved.</p>
+--  </footer>
+--
+--  <script src="script.js"></script>
+--</body>
+--</html>
+-+<!DOCTYPE html>
+-+<html lang="zh-Hant">
+-+<head>
+-+  <meta charset="UTF-8">
+-+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-+  <title>我的作品集</title>
+-+  <link rel="stylesheet" href="style.css">
+-+</head>
+-+<body>
+-+  <header>
+-+    <h1>我的作品集</h1>
+-+    <p>Google Sheet + GAS 代理圖片</p>
+-+  </header>
+-+
+-+  <main>
+-+    <nav id="category-nav" class="category-nav" aria-label="作品分類"></nav>
+-+
+-+    <section id="status" class="status" role="status" aria-live="polite"></section>
+-+    <p id="error" class="feedback feedback--error" role="alert" hidden></p>
+-+
+-+    <noscript class="noscript">此頁面需要啟用 JavaScript 才能顯示作品列表。</noscript>
+-+
+-+    <section id="gallery" class="gallery" aria-live="polite" aria-busy="false"></section>
+-+  </main>
+-+
+-+  <footer>
+-+    <p>© 2025 by Jyun Ying. All Rights Reserved.</p>
+-+  </footer>
+-+
+-+  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption">
+-+    <div class="lightbox__content" role="document">
+-+      <button type="button" class="lightbox__close" aria-label="關閉預覽">×</button>
+-+      <img id="lightbox-image" alt="" loading="lazy">
+-+      <p id="lightbox-caption"></p>
+-+    </div>
+-+  </div>
+-+
+-+  <script src="script.js"></script>
+-+</body>
+-+</html>
 +<!DOCTYPE html>
 +<html lang="zh-Hant">
 +<head>
