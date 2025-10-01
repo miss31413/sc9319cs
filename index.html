@@ -1,8 +1,3 @@
-diff --git a/index.html b/index.html
-index 37d8914b037b37a617abdfebbd0549cebbd48d41..65263dec8767bdccf3619d6cda45eaf4855cabd9 100644
---- a/index.html
-+++ b/index.html
-@@ -1,25 +1,38 @@
 -<!DOCTYPE html>
 -<html lang="zh-Hant">
 -<head>
@@ -48,6 +43,8 @@ index 37d8914b037b37a617abdfebbd0549cebbd48d41..65263dec8767bdccf3619d6cda45eaf4
 +    <section id="status" class="status" role="status" aria-live="polite"></section>
 +    <p id="error" class="feedback feedback--error" role="alert" hidden></p>
 +
++    <noscript class="noscript">此頁面需要啟用 JavaScript 才能顯示作品列表。</noscript>
++
 +    <section id="gallery" class="gallery" aria-live="polite" aria-busy="false"></section>
 +  </main>
 +
@@ -55,8 +52,8 @@ index 37d8914b037b37a617abdfebbd0549cebbd48d41..65263dec8767bdccf3619d6cda45eaf4
 +    <p>© 2025 by Jyun Ying. All Rights Reserved.</p>
 +  </footer>
 +
-+  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
-+    <div class="lightbox__content">
++  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption">
++    <div class="lightbox__content" role="document">
 +      <button type="button" class="lightbox__close" aria-label="關閉預覽">×</button>
 +      <img id="lightbox-image" alt="" loading="lazy">
 +      <p id="lightbox-caption"></p>
