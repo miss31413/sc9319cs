@@ -1,0 +1,48 @@
+
+name: Generate Data JSON
+
+on:
+  push:
+    branches:
+      - main   # 當 push 到 main 分支時自動執行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate data.json
+        run: |
+          echo "[" > data.json
+          FIRST=true
+          # 處理圖片
+          for file in $(find assets/img -type f); do
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+            else
+              echo "," >> data.json
+            fi
+            NAME=$(basename "$file")
+            echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"圖片作品\", \"link\": \"$file\", \"category\": \"圖片\"}" >> data.json
+          done
+          # 處理影片
+          for file in $(find assets/video -type f); do
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+            else
+              echo "," >> data.json
+            fi
+            NAME=$(basename "$file")
+            echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"影片作品\", \"link\": \"$file\", \"category\": \"影片\"}" >> data.json
+          done
+          echo "]" >> data.json
+
+      - name: Commit and push data.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data.json
+          git commit -m "Auto update data.json" || echo "No changes to commit"
+          git push
