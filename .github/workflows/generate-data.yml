@@ -1,10 +1,9 @@
-
 name: Generate Data JSON
 
 on:
   push:
     branches:
-      - main   # 當 push 到 main 分支時自動執行
+      - main   # 當你 push 到 main 分支時觸發
 
 jobs:
   build:
@@ -25,15 +24,11 @@ jobs:
               echo "," >> data.json
             fi
             NAME=$(basename "$file")
-            echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"圖片作品\", \"link\": \"$file\", \"category\": \"圖片\"}" >> data.json
+            echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"圖片作品\", \"link\": \"$file\", \"category\": \"插畫\"}" >> data.json
           done
           # 處理影片
           for file in $(find assets/video -type f); do
-            if [ "$FIRST" = true ]; then
-              FIRST=false
-            else
-              echo "," >> data.json
-            fi
+            echo "," >> data.json
             NAME=$(basename "$file")
             echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"影片作品\", \"link\": \"$file\", \"category\": \"影片\"}" >> data.json
           done
