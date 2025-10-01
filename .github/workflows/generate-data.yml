@@ -16,32 +16,33 @@ jobs:
         run: |
           echo "[" > data.json
           FIRST=true
-          # 處理圖片
-          for file in $(find assets/img -type f 2>/dev/null || true); do
+          for file in $(find assets -type f 2>/dev/null || true); do
+            EXT="${file##*.}"
             if [ "$FIRST" = true ]; then
               FIRST=false
             else
               echo "," >> data.json
             fi
             NAME=$(basename "$file")
-            echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"圖片作品\", \"link\": \"$file\", \"category\": \"圖片\"}" >> data.json
-          done
-          # 處理影片
-          for file in $(find assets/video -type f 2>/dev/null || true); do
-            if [ "$FIRST" = true ]; then
-              FIRST=false
-            else
-              echo "," >> data.json
-            fi
-            NAME=$(basename "$file")
-            echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"影片作品\", \"link\": \"$file\", \"category\": \"影片\"}" >> data.json
+            case "$EXT" in
+              jpg|jpeg|png|gif|webp|svg)
+                CATEGORY="圖片"
+                ;;
+              mp4|mov|webm|avi|mkv)
+                CATEGORY="影片"
+                ;;
+              *)
+                CATEGORY="其他"
+                ;;
+            esac
+            echo "  {\"name\": \"${NAME%.*}\", \"desc\": \"${CATEGORY}作品\", \"link\": \"$file\", \"category\": \"$CATEGORY\"}" >> data.json
           done
           echo "]" >> data.json
 
       - name: Commit and push data.json
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data.json
           git commit -m "Auto update data.json" || echo "No changes to commit"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }} HEAD:main
