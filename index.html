@@ -9,23 +9,12 @@
 <body>
   <header>
     <h1>我的作品集</h1>
-    <p>使用 Google Sheet + GitHub Pages 自動更新 ✨</p>
-    <nav>
-      <button onclick="filterGallery('全部')">全部</button>
-      <button onclick="filterGallery('設計')">設計</button>
-      <button onclick="filterGallery('插畫')">插畫</button>
-      <button onclick="filterGallery('攝影')">攝影</button>
-    </nav>
+    <p>Google Sheet + GAS 代理圖片</p>
   </header>
 
   <main>
-   <section class="gallery" id="gallery"></section>
+    <section id="gallery" class="gallery"></section>
   </main>
-
-  <!-- Lightbox -->
-  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="">
-  </div>
 
   <footer>
     <p>© 2025 by Jyun Ying. All Rights Reserved.</p>
@@ -34,5 +23,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
-
