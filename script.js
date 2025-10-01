@@ -10,9 +10,21 @@ const lightboxCloseBtn = document.querySelector(".lightbox__close");
 const SKELETON_COUNT = 6;
 const INVALID_LINK_PATTERNS = [/\.gitkeep$/i, /\.ds_store$/i];
 const VIDEO_EXTENSION_PATTERN = /\.mp4(\?.*)?$/i;
+const FALLBACK_IMAGE_URL = "https://via.placeholder.com/600x400?text=Image+Unavailable";
+const FOCUSABLE_ELEMENTS_SELECTOR = [
+  "a[href]",
+  "area[href]",
+  "button:not([disabled])",
+  "input:not([disabled]):not([type=hidden])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "iframe",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
 const collator = new Intl.Collator("zh-Hant", { sensitivity: "base", numeric: true });
 
 let lastFocusedElement = null;
+let cleanupFocusTrap = null;
 
 const state = {
   items: [],
@@ -237,25 +249,54 @@ function createMediaElement(item) {
     video.controls = true;
     video.preload = "metadata";
     video.playsInline = true;
+    video.setAttribute("aria-label", `${item.name} 影片`);
+    video.controlsList = "nodownload";
+    video.addEventListener("error", () => {
+      showError(`${item.name} 影片載入失敗`);
+    });
     video.innerHTML = `<source src="${item.link}" type="video/mp4">你的瀏覽器不支援影片播放`;
     return video;
   }
+
+  const previewButton = document.createElement("button");
+  previewButton.type = "button";
+  previewButton.className = "card__preview";
+  previewButton.setAttribute("aria-label", `預覽 ${item.name}`);
 
   const image = document.createElement("img");
   image.src = item.link;
   image.alt = item.name;
   image.loading = "lazy";
   image.decoding = "async";
+
   image.addEventListener("error", () => {
     image.alt = "圖片載入失敗";
-    image.src = "https://via.placeholder.com/600x400?text=Image+Unavailable";
+    image.src = FALLBACK_IMAGE_URL;
+    previewButton.disabled = true;
+    previewButton.classList.add("card__preview--disabled");
   });
-  image.addEventListener("click", () => {
+
+  image.addEventListener("load", () => {
+    const isFallback = image.currentSrc === FALLBACK_IMAGE_URL || image.src === FALLBACK_IMAGE_URL;
+    previewButton.disabled = isFallback;
+    previewButton.classList.toggle("card__preview--disabled", isFallback);
+  });
+
+  previewButton.addEventListener("click", () => {
     if (!image.currentSrc && !image.src) return;
     openLightbox(image.currentSrc || image.src, item.name, item.desc);
   });
 
-  return image;
+  previewButton.addEventListener("keydown", event => {
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      if (!image.currentSrc && !image.src) return;
+      openLightbox(image.currentSrc || image.src, item.name, item.desc);
+    }
+  });
+
+  previewButton.appendChild(image);
+  return previewButton;
 }
 
 function openLightbox(src, alt, caption) {
@@ -267,7 +308,13 @@ function openLightbox(src, alt, caption) {
   lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   document.body.classList.add("is-lightbox-open");
   document.addEventListener("keydown", onEscapeKey);
-  lightboxCloseBtn.focus();
+  if (cleanupFocusTrap) {
+    cleanupFocusTrap();
+  }
+  cleanupFocusTrap = trapFocus(lightboxEl);
+  requestAnimationFrame(() => {
+    lightboxCloseBtn.focus();
+  });
 }
 
 function closeLightbox() {
@@ -278,6 +325,10 @@ function closeLightbox() {
   lightboxCaptionEl.textContent = "";
   document.body.classList.remove("is-lightbox-open");
   document.removeEventListener("keydown", onEscapeKey);
+  if (cleanupFocusTrap) {
+    cleanupFocusTrap();
+    cleanupFocusTrap = null;
+  }
   if (lastFocusedElement) {
     lastFocusedElement.focus();
   }
@@ -297,6 +348,68 @@ lightboxEl.addEventListener("click", event => {
 });
 
 lightboxCloseBtn.addEventListener("click", closeLightbox);
+
+function trapFocus(container) {
+  const focusableElements = Array.from(
+    container.querySelectorAll(FOCUSABLE_ELEMENTS_SELECTOR)
+  ).filter(isFocusableElement);
+
+  if (focusableElements.length === 0) {
+    return () => {};
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  const handleKeyDown = event => {
+    if (event.key !== "Tab") {
+      return;
+    }
+
+    if (focusableElements.length === 1) {
+      event.preventDefault();
+      firstElement.focus();
+      return;
+    }
+
+    if (event.shiftKey) {
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      }
+    } else if (document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  };
+
+  container.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    container.removeEventListener("keydown", handleKeyDown);
+  };
+}
+
+function isFocusableElement(element) {
+  if (!(element instanceof HTMLElement)) {
+    return false;
+  }
+
+  if (element.hasAttribute("disabled") || element.getAttribute("aria-hidden") === "true") {
+    return false;
+  }
+
+  if (element.tabIndex < 0) {
+    return false;
+  }
+
+  const style = getComputedStyle(element);
+  if (style.visibility === "hidden" || style.display === "none") {
+    return false;
+  }
+
+  return true;
+}
 
 async function init() {
   showStatus("載入中…", { loading: true });
